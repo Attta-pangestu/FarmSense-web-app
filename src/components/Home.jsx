@@ -179,91 +179,100 @@ const Home = () => {
 				</div>
 
 				{/* Recommendation Bot */}
-				<div className='w-full lg:w-1/3 bg-white p-4 border-l border-gray-200 lg:relative lg:min-h-screen'>
-					<div className='lg:fixed lg:top-24 lg:right-5 lg:w-96 lg:p-6 lg:shadow-lg lg:rounded-lg lg:border-l lg:border-gray-200'>
-						<h2 className='text-3xl font-bold text-green-800 mb-4'>
-							AI ASSISTANT CHAT
-						</h2>
-						
-						<div className='bg-gray-100 p-4 rounded-lg h-64 overflow-y-scroll'>
-						{chatHistory.map((chat, index) => (
-    <div
-        key={index}
-        className={`flex mb-4 ${
-            chat.type === "user" ? "justify-end" : "justify-start"
-        }`}>
-        <div
-            className={`${
-                chat.type === "user"
-                    ? "bg-green-600 text-white"
-                    : "bg-gray-200 text-gray-800"
-            } rounded-lg p-4 max-w-xs shadow-md`}>
-            {chat.isFormatted ? (
-                <div className="formatted-response">
-                    {chat.message.split('\n').map((line, i) => {
-                        if (line.startsWith('**')) {
-                            // Heading
-                            return <h3 key={i} className="font-bold text-lg mt-2 mb-1">
-                                {line.replace(/\*\*/g, '')}
-                            </h3>;
-                        } else if (line.startsWith('*')) {
-                            // Bullet point
-                            return <li key={i} className="ml-4">
-                                {line.substring(2)}
-                            </li>;
-                        } else {
-                            // Regular text
-                            return <p key={i} className="mb-1">{line}</p>;
-                        }
-                    })}
+				{/* Recommendation Bot */}
+<div className='w-full lg:w-1/3 bg-white p-4 border-l border-gray-200'>
+    <div className='sticky top-24 w-full p-6 shadow-lg rounded-lg border-l border-gray-200'>
+        <h2 className='text-3xl font-bold text-green-800 mb-2'>
+            AI ASSISTANT CHAT
+        </h2>
+        
+        {/* Description and call-to-action */}
+        <div className="mb-4 text-gray-600">
+            <p className="text-sm mb-2">
+                Your personal AI farming assistant powered by advanced technology. Get expert advice on crop management, pest control, and agricultural best practices.
+            </p>
+            <p className="text-sm font-semibold text-green-700">
+                Ask anything about farming - I'm here to help 24/7!
+            </p>
+        </div>
+
+        <div className='bg-gray-100 p-4 rounded-lg h-64 overflow-y-scroll'>
+            {chatHistory.map((chat, index) => (
+                <div
+                    key={index}
+                    className={`flex mb-4 ${
+                        chat.type === "user" ? "justify-end" : "justify-start"
+                    }`}>
+                    <div
+                        className={`${
+                            chat.type === "user"
+                                ? "bg-green-600 text-white"
+                                : "bg-gray-200 text-gray-800"
+                        } rounded-lg p-4 max-w-xs shadow-md`}>
+                        {chat.isFormatted ? (
+                            <div className="formatted-response">
+                                {chat.message.split('\n').map((line, i) => {
+                                    if (line.startsWith('**')) {
+                                        return <h3 key={i} className="font-bold text-lg mt-2 mb-1">
+                                            {line.replace(/\*\*/g, '')}
+                                        </h3>;
+                                    } else if (line.startsWith('*')) {
+                                        return <li key={i} className="ml-4">
+                                            {line.substring(2)}
+                                        </li>;
+                                    } else {
+                                        return <p key={i} className="mb-1">{line}</p>;
+                                    }
+                                })}
+                            </div>
+                        ) : (
+                            <p>{chat.message}</p>
+                        )}
+                    </div>
                 </div>
-            ) : (
-                <p>{chat.message}</p>
+            ))}
+            {isLoading && (
+                <div className='flex justify-start mb-4'>
+                    <div className='bg-gray-200 text-gray-800 rounded-lg p-4 max-w-xs'>
+                        <div className='flex items-center'>
+                            <svg
+                                className='animate-spin h-6 w-6 text-gray-500 mr-2'
+                                xmlns='http://www.w3.org/2000/svg'
+                                fill='none'
+                                viewBox='0 0 24 24'>
+                                <circle
+                                    className='opacity-25'
+                                    cx='12'
+                                    cy='12'
+                                    r='10'
+                                    stroke='currentColor'
+                                    strokeWidth='4'></circle>
+                                <path
+                                    className='opacity-75'
+                                    fill='currentColor'
+                                    d='M4 12a8 8 0 0 1 16 0 8 8 0 0 1-16 0z'></path>
+                            </svg>
+                            <span>Generating response...</span>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
+        
+        <textarea
+            className='w-full h-24 p-4 border border-gray-300 rounded-lg resize-none mt-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500'
+            placeholder='Type your question here...'
+            value={chatMessage}
+            onChange={(e) => setChatMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
+        />
+        <button
+            className='mt-4 w-full bg-green-700 text-white rounded-lg p-2 hover:bg-green-600 transition duration-300'
+            onClick={handleChatSubmit}>
+            Submit
+        </button>
     </div>
-))}
-							{isLoading && (
-								<div className='flex justify-start mb-4'>
-									<div className='bg-gray-200 text-gray-800 rounded-lg p-4 max-w-xs'>
-										{/* Add a spinner or loading message */}
-										<div className='flex items-center'>
-											<svg
-												className='animate-spin h-6 w-6 text-gray-500 mr-2'
-												xmlns='http://www.w3.org/2000/svg'
-												fill='none'
-												viewBox='0 0 24 24'>
-												<circle
-													className='opacity-25'
-													cx='12'
-													cy='12'
-													r='10'
-													stroke='currentColor'
-													strokeWidth='4'></circle>
-												<path
-													className='opacity-75'
-													fill='currentColor'
-													d='M4 12a8 8 0 0 1 16 0 8 8 0 0 1-16 0z'></path>
-											</svg>
-											<span>Generating response...</span>
-										</div>
-									</div>
-								</div>
-							)}
-						</div>
-						<textarea
-							className='w-full h-24 p-4 border border-gray-300 rounded-lg resize-none mt-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500'
-							placeholder='Type your question here...'
-							value={chatMessage}
-							onChange={(e) => setChatMessage(e.target.value)}
-						/>
-						<button
-							className='mt-4 w-full bg-green-700 text-white rounded-lg p-2 hover:bg-green-600 transition duration-300'
-							onClick={handleChatSubmit}>
-							Submit
-						</button>
-					</div>
-				</div>
+</div>
 			</div>
 		</>
 	);
