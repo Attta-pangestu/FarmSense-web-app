@@ -182,12 +182,9 @@ const Home = () => {
 				<div className='w-full lg:w-1/3 bg-white p-4 border-l border-gray-200 lg:relative lg:min-h-screen'>
 					<div className='lg:fixed lg:top-24 lg:right-5 lg:w-96 lg:p-6 lg:shadow-lg lg:rounded-lg lg:border-l lg:border-gray-200'>
 						<h2 className='text-3xl font-bold text-green-800 mb-4'>
-							Recommendation Bot
+							AI ASSISTANT CHAT
 						</h2>
-						<p className='text-gray-700 mb-4'>
-							Ask the bot for advice or information about farm management. It
-							can help you with tips, alerts, and other useful recommendations.
-						</p>
+						
 						<div className='bg-gray-100 p-4 rounded-lg h-64 overflow-y-scroll'>
 						{chatHistory.map((chat, index) => (
     <div
