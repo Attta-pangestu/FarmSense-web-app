@@ -3,41 +3,70 @@
 import React, { useState } from "react";
 import Nav from "./Nav";
 import { Link } from "react-router-dom";
+import { geminiModel } from "../config/gemini.js";
 
 const Home = () => {
 	const [chatMessage, setChatMessage] = useState("");
 	const [chatHistory, setChatHistory] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
 
-	const handleChatSubmit = () => {
+	const handleKeyPress = (e) => {
+		if (e.key === 'Enter' && !e.shiftKey) {
+		  e.preventDefault();
+		  handleChatSubmit();
+		}
+	  };
+
+	  const handleChatSubmit = async () => {
 		if (chatMessage.trim() === "") return;
-
+	  
 		setIsLoading(true);
-
-		// Simulate response generation with a delay
-		setTimeout(() => {
-			// Random responses logic
-		/*	const responses = [
-				"For pest control, consider using natural predators or organic pesticides.",
-				"Optimal irrigation levels are crucial. Make sure to water your crops early in the morning or late in the evening.",
-				"Maintaining soil health is vital. Regularly test your soil and use compost to improve its quality.",
-				"Monitor weather forecasts to plan your farming activities effectively.",
-				"Thank you for your message! We will get back to you shortly.",
-			];*/
-const responses = ["Under maintenance."];
-			const randomResponse =
-				responses[Math.floor(Math.random() * responses.length)];
-
-			// Update chat history
-			setChatHistory([
-				...chatHistory,
-				{ type: "user", message: chatMessage },
-				{ type: "bot", message: randomResponse },
-			]);
-
-			setChatMessage(""); // Clear the input field
-			setIsLoading(false);
-		}, 2000); // Simulate loading time
+		
+		// Add user message immediately
+		setChatHistory(prev => [...prev, { type: "user", message: chatMessage }]);
+		
+		try {
+		  // Send to Gemini API
+		  const prompt = `As a farming expert assistant, please help with this query: ${chatMessage}
+			Focus on providing practical farming advice and solutions.
+			Format the response in a clean, structured way using:
+			- Clear headings with "**" for bold
+			- Bullet points with "*" for lists
+			- Organized sections
+			- Concise explanations
+			Keep the response specific to farming topics.`;
+	  
+		  const result = await geminiModel.generateContent(prompt);
+		  const response = await result.response;
+		  let botMessage = response.text();
+		  
+		  // Format the response
+		  botMessage = botMessage
+			// Format headings
+			.replace(/^(.*?):/gm, '**$1:**')
+			// Format bullet points
+			.replace(/^[-•]\s*(.*)/gm, '* $1')
+			// Add spacing between sections
+			.replace(/\n\n/g, '\n\n')
+			// Clean up any extra whitespace
+			.trim();
+	
+		  // Add bot response
+		  setChatHistory(prev => [...prev, { 
+			type: "bot", 
+			message: botMessage,
+			isFormatted: true // Add this flag for formatted messages
+		  }]);
+		} catch (error) {
+		  console.error('Error:', error);
+		  setChatHistory(prev => [...prev, {
+			type: "bot",
+			message: "Sorry, I encountered an error. Please try again."
+		  }]);
+		} finally {
+		  setChatMessage("");
+		  setIsLoading(false);
+		}
 	};
 
 	return (
@@ -160,22 +189,43 @@ const responses = ["Under maintenance."];
 							can help you with tips, alerts, and other useful recommendations.
 						</p>
 						<div className='bg-gray-100 p-4 rounded-lg h-64 overflow-y-scroll'>
-							{chatHistory.map((chat, index) => (
-								<div
-									key={index}
-									className={`flex mb-4 ${
-										chat.type === "user" ? "justify-end" : "justify-start"
-									}`}>
-									<div
-										className={`${
-											chat.type === "user"
-												? "bg-green-600 text-white"
-												: "bg-gray-200 text-gray-800"
-										} rounded-lg p-4 max-w-xs shadow-md`}>
-										{chat.message}
-									</div>
-								</div>
-							))}
+						{chatHistory.map((chat, index) => (
+    <div
+        key={index}
+        className={`flex mb-4 ${
+            chat.type === "user" ? "justify-end" : "justify-start"
+        }`}>
+        <div
+            className={`${
+                chat.type === "user"
+                    ? "bg-green-600 text-white"
+                    : "bg-gray-200 text-gray-800"
+            } rounded-lg p-4 max-w-xs shadow-md`}>
+            {chat.isFormatted ? (
+                <div className="formatted-response">
+                    {chat.message.split('\n').map((line, i) => {
+                        if (line.startsWith('**')) {
+                            // Heading
+                            return <h3 key={i} className="font-bold text-lg mt-2 mb-1">
+                                {line.replace(/\*\*/g, '')}
+                            </h3>;
+                        } else if (line.startsWith('*')) {
+                            // Bullet point
+                            return <li key={i} className="ml-4">
+                                {line.substring(2)}
+                            </li>;
+                        } else {
+                            // Regular text
+                            return <p key={i} className="mb-1">{line}</p>;
+                        }
+                    })}
+                </div>
+            ) : (
+                <p>{chat.message}</p>
+            )}
+        </div>
+    </div>
+))}
 							{isLoading && (
 								<div className='flex justify-start mb-4'>
 									<div className='bg-gray-200 text-gray-800 rounded-lg p-4 max-w-xs'>

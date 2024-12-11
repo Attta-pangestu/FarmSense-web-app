@@ -130,7 +130,7 @@ const Profile = () => {
 							</div>
 							<div>
 								<h2 className='text-xl md:text-2xl font-bold text-green-800'>
-									{profile.name || "John Doe"}
+									{profile.name || "Atha Rizki Pangestu"}
 								</h2>
 								<p className='text-gray-600'>{profile.role || "Farmer"}</p>
 							</div>
@@ -138,7 +138,7 @@ const Profile = () => {
 						<div className='mt-4'>
 							<p className='text-gray-700 flex items-center text-sm md:text-base'>
 								<FaEnvelope className='mr-2 text-green-600' />
-								Email: {profile.email || "john.doe@example.com"}
+								Email: {profile.email || "AthaRizki@example.com"}
 							</p>
 							<p className='text-gray-700 flex items-center text-sm md:text-base'>
 								<FaPhone className='mr-2 text-green-600' />
@@ -146,11 +146,11 @@ const Profile = () => {
 							</p>
 							<p className='text-gray-700 flex items-center text-sm md:text-base'>
 								<FaMapMarkerAlt className='mr-2 text-green-600' />
-								District: {profile.district || "District"}
+								District: {profile.district || "Belitung"}
 							</p>
 							<p className='text-gray-700 flex items-center text-sm md:text-base'>
 								<FaMapMarkerAlt className='mr-2 text-green-600' />
-								City: {profile.city || "City"}
+								City: {profile.city || "Tanjungpandan"}
 							</p>
 							{isEditing ? (
 								<div>

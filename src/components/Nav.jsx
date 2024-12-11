@@ -133,7 +133,7 @@ export default function Nav() {
 											<span className='sr-only'>Open user menu</span>
 											<img
 												className='h-8 w-8 rounded-full'
-												src={localStorage.getItem("profileImage")}
+												src='https://www.pngkey.com/png/detail/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png'
 												alt='Profile'
 											/>
 										</Menu.Button>
